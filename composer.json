@@ -12,6 +12,7 @@
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6",
         "gedmo/doctrine-extensions": "^3.22",
+        "nelmio/cors-bundle": "^2.6",
         "stof/doctrine-extensions-bundle": "^1.15",
         "symfony/console": "8.0.*",
         "symfony/dotenv": "8.0.*",

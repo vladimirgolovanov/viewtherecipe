@@ -3,15 +3,23 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\RecipeRepository;
 use App\State\RecipeStateProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
-    processor: RecipeStateProcessor::class
+    operations: [
+        new GetCollection(),
+        new Get(security: "object.getOwner() == user"),
+    ],
+    normalizationContext: ['groups' => ['recipe:read']],
+    processor: RecipeStateProcessor::class,
 )]
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
 class Recipe
@@ -22,13 +30,20 @@ class Recipe
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['recipe:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['recipe:read'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['recipe:read'])]
     private ?string $description = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['recipe:read'])]
+    private ?string $source = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipes')]
     #[ORM\JoinColumn(nullable: false)]

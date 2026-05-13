@@ -2,19 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface
 {
     use TimestampableEntity;
     use SoftDeleteableEntity;
@@ -24,29 +24,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
-    private ?string $email = null;
-
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
-    private ?string $password = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $telegram_user_id = null;
+
+    #[ORM\Column(length: 64, unique: true, nullable: true)]
+    private ?string $apiToken = null;
 
     /**
      * @var Collection<int, Recipe>
      */
     #[ORM\OneToMany(targetEntity: Recipe::class, mappedBy: 'owner', orphanRemoval: true)]
     private Collection $recipes;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $telegram_user_id = null;
 
     public function __construct()
     {
@@ -58,43 +49,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string) $this->telegram_user_id;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -102,30 +69,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
-    public function getPassword(): ?string
+    public function eraseCredentials(): void {}
+
+    public function getTelegramUserId(): ?int
     {
-        return $this->password;
+        return $this->telegram_user_id;
     }
 
-    public function setPassword(string $password): static
+    public function setTelegramUserId(?int $telegram_user_id): static
     {
-        $this->password = $password;
+        $this->telegram_user_id = $telegram_user_id;
 
         return $this;
     }
 
-    /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
-     */
-    public function __serialize(): array
+    public function getApiToken(): ?string
     {
-        $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        return $this->apiToken;
+    }
 
-        return $data;
+    public function setApiToken(?string $token): static
+    {
+        $this->apiToken = $token;
+
+        return $this;
     }
 
     /**
@@ -149,23 +116,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeRecipe(Recipe $recipe): static
     {
         if ($this->recipes->removeElement($recipe)) {
-            // set the owning side to null (unless already changed)
             if ($recipe->getOwner() === $this) {
                 $recipe->setOwner(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTelegramUserId(): ?int
-    {
-        return $this->telegram_user_id;
-    }
-
-    public function setTelegramUserId(?int $telegram_user_id): static
-    {
-        $this->telegram_user_id = $telegram_user_id;
 
         return $this;
     }
