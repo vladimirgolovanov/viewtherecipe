@@ -7,6 +7,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\RecipeRepository;
 use App\State\RecipeStateProcessor;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -26,6 +28,13 @@ class Recipe
 {
     use TimestampableEntity;
     use SoftDeleteableEntity;
+
+    /**
+     * @var Collection<int, RecipeImage>
+     */
+    #[ORM\OneToMany(targetEntity: RecipeImage::class, mappedBy: 'recipe', orphanRemoval: true)]
+    #[Groups(['recipe:read'])]
+    private Collection $images;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -51,6 +60,11 @@ class Recipe
 
     #[ORM\Column(nullable: true)]
     private ?int $telegram_message_id = null;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -101,6 +115,47 @@ class Recipe
     public function setTelegramMessageId(?int $telegram_message_id): static
     {
         $this->telegram_message_id = $telegram_message_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RecipeImage>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(RecipeImage $image): static
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setRecipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(RecipeImage $image): static
+    {
+        if ($this->images->removeElement($image)) {
+            if ($image->getRecipe() === $this) {
+                $image->setRecipe(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSource(): ?string
+    {
+        return $this->source;
+    }
+
+    public function setSource(string $source): static
+    {
+        $this->source = $source;
 
         return $this;
     }

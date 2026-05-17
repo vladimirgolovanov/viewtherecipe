@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: viewtherecipe
+  namespace: savetherecipe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: viewtherecipe
+  template:
+    metadata:
+      labels:
+        app: viewtherecipe
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: viewtherecipe
+          image: ghcr.io/vladimirgolovanov/viewtherecipe/viewtherecipe:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: viewtherecipe-env
+          ports:
+            - containerPort: 11456
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: viewtherecipe
+  namespace: savetherecipe
+spec:
+  selector:
+    app: viewtherecipe
+  ports:
+    - port: 11456
+      targetPort: 11456

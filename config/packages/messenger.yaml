@@ -1,0 +1,14 @@
+framework:
+    messenger:
+        transports:
+            recipes:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                serializer: App\Messenger\ExternalJsonMessageSerializer
+                retry_strategy:
+                    max_retries: 0
+                options:
+                    queues:
+                        savetherecipe: ~
+
+        routing:
+            App\Message\RecipeMessage: recipes

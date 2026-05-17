@@ -14,10 +14,13 @@
         "gedmo/doctrine-extensions": "^3.22",
         "nelmio/cors-bundle": "^2.6",
         "stof/doctrine-extensions-bundle": "^1.15",
+        "symfony/amqp-messenger": "8.0.*",
         "symfony/console": "8.0.*",
         "symfony/dotenv": "8.0.*",
+        "symfony/expression-language": "8.0.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "8.0.*",
+        "symfony/messenger": "8.0.*",
         "symfony/runtime": "8.0.*",
         "symfony/security-bundle": "8.0.*",
         "symfony/yaml": "8.0.*"
