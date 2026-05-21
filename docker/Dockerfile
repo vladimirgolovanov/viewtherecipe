@@ -16,10 +16,19 @@ RUN apk add --no-cache \
     rabbitmq-c-dev \
     libzip \
     libzip-dev \
-    && docker-php-ext-install pdo_pgsql intl opcache zip \
-    && pecl install amqp \
+    git \
+    $PHPIZE_DEPS \
+    && docker-php-ext-install pdo_pgsql intl zip \
+    && apk del icu-dev postgresql-dev libzip-dev
+
+RUN git clone https://github.com/php-amqp/php-amqp.git /tmp/php-amqp \
+    && cd /tmp/php-amqp \
+    && git fetch origin pull/595/head \
+    && git checkout FETCH_HEAD \
+    && phpize && ./configure && make && make install \
     && docker-php-ext-enable amqp \
-    && apk del icu-dev postgresql-dev rabbitmq-c-dev libzip-dev
+    && rm -rf /tmp/php-amqp \
+    && apk del rabbitmq-c-dev git
 
 WORKDIR /var/www/html
 
