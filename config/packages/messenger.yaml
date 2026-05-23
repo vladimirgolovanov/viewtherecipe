@@ -1,5 +1,7 @@
 framework:
     messenger:
+        failure_transport: failed
+
         transports:
             recipes:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
@@ -9,6 +11,12 @@ framework:
                 options:
                     queues:
                         savetherecipe: ~
+
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queues:
+                        savetherecipe_failed: ~
 
         routing:
             App\Message\RecipeMessage: recipes

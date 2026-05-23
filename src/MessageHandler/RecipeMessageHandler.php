@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Message\RecipeMessage;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -16,35 +17,54 @@ class RecipeMessageHandler
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
+        private readonly LoggerInterface $logger,
     ) {}
 
     public function __invoke(RecipeMessage $message): void
     {
-        $user = $this->userRepository->findOneBy(['telegram_user_id' => $message->telegramUserId]);
+        $this->logger->info('RecipeMessage received', [
+            'telegram_user_id' => $message->telegramUserId,
+            'url' => $message->url,
+        ]);
 
-        if ($user === null) {
-            $user = new User();
-            $user->setTelegramUserId($message->telegramUserId);
-            $user->setRoles([]);
-            $this->entityManager->persist($user);
+        try {
+            $user = $this->userRepository->findOneBy(['telegram_user_id' => $message->telegramUserId]);
+
+            if ($user === null) {
+                $user = new User();
+                $user->setTelegramUserId($message->telegramUserId);
+                $user->setRoles([]);
+                $this->entityManager->persist($user);
+            }
+
+            $recipe = new Recipe();
+            $recipe->setTitle($this->extractTitle($message->text));
+            $recipe->setDescription($message->text ?: null);
+            $recipe->setSource($message->url ?: null);
+            $recipe->setOwner($user);
+
+            $this->entityManager->persist($recipe);
+
+            if ($message->imageUrl !== '') {
+                $image = new RecipeImage();
+                $image->setUrl($message->imageUrl);
+                $image->setRecipe($recipe);
+                $this->entityManager->persist($image);
+            }
+
+            $this->entityManager->flush();
+
+            $this->logger->info('RecipeMessage processed successfully', [
+                'telegram_user_id' => $message->telegramUserId,
+            ]);
+        } catch (\Throwable $e) {
+            $this->logger->error('RecipeMessage failed', [
+                'telegram_user_id' => $message->telegramUserId,
+                'url' => $message->url,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
         }
-
-        $recipe = new Recipe();
-        $recipe->setTitle($this->extractTitle($message->text));
-        $recipe->setDescription($message->text ?: null);
-        $recipe->setSource($message->url ?: null);
-        $recipe->setOwner($user);
-
-        $this->entityManager->persist($recipe);
-
-        if ($message->imageUrl !== '') {
-            $image = new RecipeImage();
-            $image->setUrl($message->imageUrl);
-            $image->setRecipe($recipe);
-            $this->entityManager->persist($image);
-        }
-
-        $this->entityManager->flush();
     }
 
     private function extractTitle(string $text): string
