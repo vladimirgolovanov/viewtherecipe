@@ -638,7 +638,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         }>,
  *     },
  *     uid?: bool|array{ // Uid configuration
- *         enabled?: bool|Param, // Default: false
+ *         enabled?: bool|Param, // Default: true
  *         default_uuid_version?: 7|6|4|1|Param, // Default: 7
  *         name_based_uuid_version?: 5|3|Param, // Default: 5
  *         name_based_uuid_namespace?: scalar|Param|null,
@@ -1582,6 +1582,37 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         skip_same_as_origin?: bool|Param,
  *     }>,
  * }
+ * @psalm-type McpConfig = array{
+ *     app?: scalar|Param|null, // Default: "app"
+ *     version?: scalar|Param|null, // Default: "0.0.1"
+ *     description?: scalar|Param|null, // Default: null
+ *     icons?: list<array{ // Default: []
+ *         src?: scalar|Param|null,
+ *         mime_type?: scalar|Param|null, // Default: null
+ *         sizes?: list<scalar|Param|null>,
+ *     }>,
+ *     website_url?: scalar|Param|null, // Default: null
+ *     pagination_limit?: int|Param, // Default: 50
+ *     instructions?: scalar|Param|null, // Default: null
+ *     client_transports?: array{
+ *         stdio?: bool|Param, // Default: false
+ *         http?: bool|Param, // Default: false
+ *     },
+ *     discovery?: array{
+ *         scan_dirs?: list<scalar|Param|null>,
+ *         exclude_dirs?: list<scalar|Param|null>,
+ *     },
+ *     http?: array{
+ *         path?: scalar|Param|null, // Default: "/_mcp"
+ *         session?: array{
+ *             store?: "file"|"memory"|"cache"|"framework"|Param, // Default: "file"
+ *             directory?: scalar|Param|null, // Default: "%kernel.cache_dir%/mcp-sessions"
+ *             cache_pool?: scalar|Param|null, // Default: "cache.mcp.sessions"
+ *             prefix?: scalar|Param|null, // Default: "mcp-"
+ *             ttl?: int|Param, // Default: 3600
+ *         },
+ *     },
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1593,6 +1624,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     security?: SecurityConfig,
  *     stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *     nelmio_cors?: NelmioCorsConfig,
+ *     mcp?: McpConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1605,6 +1637,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         security?: SecurityConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         nelmio_cors?: NelmioCorsConfig,
+ *         mcp?: McpConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1617,6 +1650,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         security?: SecurityConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         nelmio_cors?: NelmioCorsConfig,
+ *         mcp?: McpConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1629,6 +1663,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         security?: SecurityConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         nelmio_cors?: NelmioCorsConfig,
+ *         mcp?: McpConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

@@ -1,0 +1,20 @@
+mcp:
+    app: SaveTheRecipe
+    version: '1.0.0'
+    description: 'Recipe management MCP server'
+    instructions: |
+        This MCP server provides access to recipes saved by the user in SaveTheRecipe.
+
+        When helping a user plan meals:
+        1. Ask how many meals they want to plan and any dietary preferences.
+        2. Call get_random_recipe to get one recipe suggestion.
+        3. Show the recipe title and description, ask if it works for their plan.
+        4. If yes, add it to the plan and pass its id in exclude_ids next time.
+        5. If no, call get_random_recipe again with the same exclude_ids.
+        6. Repeat until the plan is complete.
+    client_transports:
+        http: true
+    http:
+        path: /mcp
+        session:
+            store: file

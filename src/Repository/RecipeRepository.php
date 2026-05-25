@@ -16,6 +16,36 @@ class RecipeRepository extends ServiceEntityRepository
         parent::__construct($registry, Recipe::class);
     }
 
+    /**
+     * @param int[] $excludeIds
+     */
+    public function findRandomForOwner(int $ownerId, array $excludeIds = []): ?Recipe
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->where('r.owner = :owner')
+            ->setParameter('owner', $ownerId);
+
+        if ($excludeIds) {
+            $qb->andWhere('r.id NOT IN (:excludeIds)')
+               ->setParameter('excludeIds', $excludeIds);
+        }
+
+        $total = (int) (clone $qb)
+            ->select('COUNT(r.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if ($total === 0) {
+            return null;
+        }
+
+        return $qb
+            ->setFirstResult(random_int(0, $total - 1))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 //    /**
 //     * @return Recipe[] Returns an array of Recipe objects
 //     */

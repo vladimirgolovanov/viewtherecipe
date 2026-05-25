@@ -9,7 +9,7 @@ security:
             pattern: ^/_(profiler|wdt)
             security: false
         api:
-            pattern: ^/api
+            pattern: ^/(api|mcp)
             stateless: true
             custom_authenticators:
                 - App\Security\TelegramAuthenticator
@@ -19,3 +19,4 @@ security:
     access_control:
         - { path: ^/api/auth/telegram, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_USER }
+        - { path: ^/mcp, roles: ROLE_USER }

@@ -5,7 +5,10 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\McpTool;
+use App\Dto\GetRandomRecipeInput;
 use App\Repository\RecipeRepository;
+use App\State\RandomRecipeProvider;
 use App\State\RecipeStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,6 +22,16 @@ use Symfony\Component\Serializer\Attribute\Groups;
     operations: [
         new GetCollection(),
         new Get(security: "object.getOwner() == user"),
+        new McpTool(
+            name: 'list_recipes',
+            description: 'List all recipes saved by the user. Returns id, title, and description for each recipe. Use this to give the user an overview of what they have saved.',
+        ),
+        new McpTool(
+            name: 'get_random_recipe',
+            description: 'Get a random recipe for meal planning. Pass exclude_ids (array of integers) with IDs of recipes already suggested in this session to avoid repetition. Returns full recipe details: id, title, description, source URL, and images.',
+            input: GetRandomRecipeInput::class,
+            provider: RandomRecipeProvider::class,
+        ),
     ],
     normalizationContext: ['groups' => ['recipe:read']],
     processor: RecipeStateProcessor::class,
