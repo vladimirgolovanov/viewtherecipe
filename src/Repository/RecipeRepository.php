@@ -16,6 +16,15 @@ class RecipeRepository extends ServiceEntityRepository
         parent::__construct($registry, Recipe::class);
     }
 
+    public function findAllForOwner(int $ownerId): array
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->where('r.owner = :owner')
+            ->setParameter('owner', $ownerId);
+
+        return $qb->getQuery()->getResult();
+    }
+
     /**
      * @param int[] $excludeIds
      */
