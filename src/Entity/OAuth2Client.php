@@ -8,19 +8,17 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
 use Doctrine\ORM\Mapping as ORM;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 
 #[ApiResource(
     operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(),
-        new Delete(),
+        new GetCollection(security: 'is_granted("ROLE_USER")'),
+        new Get(security: 'object.getUser() == user'),
+        new Delete(security: 'object.getUser() == user'),
     ]
 )]
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: \App\Repository\OAuth2ClientRepository::class)]
 #[ORM\Table(name: 'oauth2_client')]
 class OAuth2Client implements ClientEntityInterface
 {

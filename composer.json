@@ -15,7 +15,7 @@
         "doctrine/orm": "^3.6.6",
         "gedmo/doctrine-extensions": "^3.22",
         "league/oauth2-server": "^9.3",
-        "nelmio/cors-bundle": "^2.6.1",
+        "nelmio/cors-bundle": "^2.6",
         "nyholm/psr7": "^1.8",
         "stof/doctrine-extensions-bundle": "^1.15.3",
         "symfony/amqp-messenger": "8.0.*",

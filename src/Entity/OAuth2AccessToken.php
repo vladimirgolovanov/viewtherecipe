@@ -7,7 +7,6 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
 use Doctrine\ORM\Mapping as ORM;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
@@ -17,9 +16,8 @@ use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 
 #[ApiResource(
     operations: [
-        new Post(),
-        new Delete(),
-        new GetCollection(),
+        new GetCollection(security: 'is_granted("ROLE_USER")'),
+        new Delete(security: 'object.getClient().getUser() == user'),
     ]
 )]
 #[ORM\Entity]
