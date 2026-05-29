@@ -62,6 +62,11 @@ class OAuth2Client implements ClientEntityInterface
         return true;
     }
 
+    public function getSecret(): string
+    {
+        return $this->secret;
+    }
+
     public function validateSecret(string $secret): bool
     {
         return hash_equals($this->secret, $secret);
