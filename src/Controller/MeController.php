@@ -10,7 +10,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class MeController extends AbstractController
 {
-    public function __construct(private Security $security) {}
+    public function __construct(private Security $security)
+    {
+    }
 
     #[Route('/api/me', name: 'api_me', methods: ['GET'])]
     public function __invoke(): JsonResponse
@@ -29,7 +31,7 @@ class MeController extends AbstractController
                         'type' => 'http',
                         'url' => 'https://savetherecipe.golovanov.me/mcp',
                         'headers' => [
-                            'Authorization' => 'Bearer ' . $token,
+                            'Authorization' => 'Bearer '.$token,
                         ],
                     ],
                 ],

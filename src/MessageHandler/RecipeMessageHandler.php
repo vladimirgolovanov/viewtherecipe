@@ -18,7 +18,8 @@ class RecipeMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly LoggerInterface $logger,
-    ) {}
+    ) {
+    }
 
     public function __invoke(RecipeMessage $message): void
     {
@@ -30,7 +31,7 @@ class RecipeMessageHandler
         try {
             $user = $this->userRepository->findOneBy(['telegram_user_id' => $message->telegramUserId]);
 
-            if ($user === null) {
+            if (null === $user) {
                 $user = new User();
                 $user->setTelegramUserId($message->telegramUserId);
                 $user->setRoles([]);
@@ -45,7 +46,7 @@ class RecipeMessageHandler
 
             $this->entityManager->persist($recipe);
 
-            if ($message->imageUrl !== '') {
+            if ('' !== $message->imageUrl) {
                 $image = new RecipeImage();
                 $image->setUrl($message->imageUrl);
                 $image->setRecipe($recipe);
@@ -69,7 +70,7 @@ class RecipeMessageHandler
 
     private function extractTitle(string $text): string
     {
-        if ($text === '') {
+        if ('' === $text) {
             return 'Без названия';
         }
 
@@ -82,9 +83,9 @@ class RecipeMessageHandler
             $sentencePos = $matches[0][1] + 1; // include punctuation char
         }
 
-        if ($newlinePos !== false && ($sentencePos === false || $newlinePos <= $sentencePos)) {
+        if (false !== $newlinePos && (false === $sentencePos || $newlinePos <= $sentencePos)) {
             $title = substr($text, 0, $newlinePos);
-        } elseif ($sentencePos !== false) {
+        } elseif (false !== $sentencePos) {
             $title = substr($text, 0, $sentencePos);
         } else {
             $title = mb_substr($text, 0, 100);
@@ -92,7 +93,7 @@ class RecipeMessageHandler
 
         $title = trim($title);
 
-        if ($title === '') {
+        if ('' === $title) {
             $title = mb_substr($text, 0, 100);
         }
 

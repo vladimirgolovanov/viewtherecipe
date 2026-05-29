@@ -14,7 +14,8 @@ class RandomRecipeProvider implements ProviderInterface
     public function __construct(
         private RecipeRepository $recipeRepository,
         private Security $security,
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {

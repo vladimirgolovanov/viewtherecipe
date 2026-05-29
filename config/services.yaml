@@ -9,3 +9,18 @@ services:
 
     App\:
         resource: '../src/'
+
+    League\OAuth2\Server\AuthorizationServer:
+        arguments:
+            $clientRepository: '@App\Repository\ClientRepository'
+            $accessTokenRepository: '@App\Repository\AccessTokenRepository'
+            $scopeRepository: '@App\Repository\ScopeRepository'
+            $privateKey: '%kernel.project_dir%/var/oauth/private.key'
+            $encryptionKey: '%env(OAUTH2_ENCRYPTION_KEY)%'
+        calls:
+            - enableGrantType:
+                  - !service
+                      class: League\OAuth2\Server\Grant\ClientCredentialsGrant
+                  - !service
+                      class: DateInterval
+                      arguments: ['PT1H']

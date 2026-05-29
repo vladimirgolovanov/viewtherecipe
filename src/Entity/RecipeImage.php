@@ -23,11 +23,11 @@ class RecipeImage
 
     #[ORM\ManyToOne(inversedBy: 'images')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Recipe $recipe = null;
+    private Recipe $recipe;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['recipe:read'])]
-    private ?string $url = null;
+    private string $url;
 
     public function getId(): ?int
     {

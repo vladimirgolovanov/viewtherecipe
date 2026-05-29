@@ -69,7 +69,9 @@ class User implements UserInterface
         return $this;
     }
 
-    public function eraseCredentials(): void {}
+    public function eraseCredentials(): void
+    {
+    }
 
     public function getTelegramUserId(): ?int
     {

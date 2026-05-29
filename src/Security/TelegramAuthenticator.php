@@ -26,11 +26,12 @@ class TelegramAuthenticator extends AbstractAuthenticator
         private readonly string $botToken,
         private readonly UserRepository $userRepository,
         private readonly EntityManagerInterface $em,
-    ) {}
+    ) {
+    }
 
     public function supports(Request $request): ?bool
     {
-        return $request->getPathInfo() === self::AUTH_PATH;
+        return self::AUTH_PATH === $request->getPathInfo();
     }
 
     public function authenticate(Request $request): Passport
@@ -46,7 +47,7 @@ class TelegramAuthenticator extends AbstractAuthenticator
         ksort($params);
 
         $dataCheckString = implode("\n", array_map(
-            static fn(string $k, string $v): string => "$k=$v",
+            static fn (string $k, string $v): string => "$k=$v",
             array_keys($params),
             array_values($params),
         ));
@@ -64,7 +65,7 @@ class TelegramAuthenticator extends AbstractAuthenticator
         $telegramId = (int) $params['id'];
 
         return new SelfValidatingPassport(
-            new UserBadge((string) $telegramId, fn(string $id): User => $this->loadOrCreateUser((int) $id))
+            new UserBadge((string) $telegramId, fn (string $id): User => $this->loadOrCreateUser((int) $id))
         );
     }
 
@@ -88,7 +89,7 @@ class TelegramAuthenticator extends AbstractAuthenticator
     {
         $user = $this->userRepository->findOneBy(['telegram_user_id' => $telegramId]);
 
-        if ($user === null) {
+        if (null === $user) {
             $user = new User();
             $user->setTelegramUserId($telegramId);
             $user->setApiToken(bin2hex(random_bytes(32)));
@@ -98,7 +99,7 @@ class TelegramAuthenticator extends AbstractAuthenticator
             return $user;
         }
 
-        if ($user->getApiToken() === null) {
+        if (null === $user->getApiToken()) {
             $user->setApiToken(bin2hex(random_bytes(32)));
             $this->em->flush();
         }

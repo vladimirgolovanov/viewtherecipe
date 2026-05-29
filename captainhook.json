@@ -1,0 +1,26 @@
+{
+    "pre-commit": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "vendor/bin/php-cs-fixer fix --dry-run --diff --no-interaction",
+                "options": {},
+                "conditions": []
+            },
+            {
+                "action": "vendor/bin/phpstan analyse --no-progress",
+                "options": {},
+                "conditions": []
+            }
+        ]
+    },
+    "commit-msg": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "\\CaptainHook\\App\\Hook\\Message\\Action\\Beams"
+            }
+        ]
+    }
+}
+

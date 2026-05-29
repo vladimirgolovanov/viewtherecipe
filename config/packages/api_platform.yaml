@@ -8,3 +8,5 @@ api_platform:
     mcp:
         enabled: true
         format: jsonld
+    mapping:
+        paths: ['%kernel.project_dir%/src/Entity']

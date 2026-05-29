@@ -18,7 +18,8 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
 {
     public function __construct(
         private readonly UserRepository $userRepository,
-    ) {}
+    ) {
+    }
 
     public function supports(Request $request): ?bool
     {
@@ -34,7 +35,7 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
             new UserBadge($token, function (string $token): User {
                 $user = $this->userRepository->findOneBy(['apiToken' => $token]);
 
-                if ($user === null) {
+                if (null === $user) {
                     throw new AuthenticationException('Invalid API token.');
                 }
 

@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Get(security: "object.getOwner() == user"),
+        new Get(security: 'object.getOwner() == user'),
     ],
     normalizationContext: ['groups' => ['recipe:read']],
     processor: RecipeStateProcessor::class,
@@ -59,7 +59,7 @@ class Recipe
 
     #[ORM\Column(length: 255)]
     #[Groups(['recipe:read'])]
-    private ?string $title = null;
+    private string $title = '';
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(['recipe:read'])]
@@ -71,7 +71,7 @@ class Recipe
 
     #[ORM\ManyToOne(inversedBy: 'recipes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $owner = null;
+    private User $owner;
 
     #[ORM\Column(nullable: true)]
     private ?int $telegram_message_id = null;

@@ -9,5 +9,6 @@ class RecipeMessage
         public readonly string $url,
         public readonly string $imageUrl,
         public readonly int $telegramUserId,
-    ) {}
+    ) {
+    }
 }

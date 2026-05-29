@@ -1,0 +1,83 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Entity;
+
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use Doctrine\ORM\Mapping as ORM;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\Traits\AccessTokenTrait;
+use League\OAuth2\Server\Entities\Traits\EntityTrait;
+use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
+
+#[ApiResource(
+    operations: [
+        new Post(),
+        new Delete(),
+        new GetCollection(),
+    ]
+)]
+#[ORM\Entity]
+#[ORM\Table(name: 'oauth2_access_token')]
+class OAuth2AccessToken implements AccessTokenEntityInterface
+{
+    use AccessTokenTrait;
+    use EntityTrait;
+    use TokenEntityTrait;
+
+    #[ORM\Id]
+    #[ORM\Column(type: 'string', length: 255)]
+    protected string $identifier;
+
+    #[ORM\ManyToOne(targetEntity: OAuth2Client::class)]
+    #[ORM\JoinColumn(referencedColumnName: 'identifier', nullable: false)]
+    protected ClientEntityInterface $client; // @phpstan-ignore-line
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $revoked = false;
+
+    #[ORM\Column(type: 'datetime_immutable')]
+    protected \DateTimeImmutable $expiryDateTime;
+
+    public function __construct()
+    {
+        $this->identifier = bin2hex(random_bytes(40));
+        $this->expiryDateTime = new \DateTimeImmutable('+1 year');
+        $this->scopes = [new OAuth2Scope('mcp')];
+    }
+
+    public function getClient(): ClientEntityInterface
+    {
+        return $this->client;
+    }
+
+    public function setClient(ClientEntityInterface $client): void
+    {
+        $this->client = $client;
+    }
+
+    public function isRevoked(): bool
+    {
+        return $this->revoked;
+    }
+
+    public function revoke(): void
+    {
+        $this->revoked = true;
+    }
+
+    public function getExpiryDateTime(): \DateTimeImmutable
+    {
+        return $this->expiryDateTime;
+    }
+
+    public function setExpiryDateTime(\DateTimeImmutable $dateTime): void
+    {
+        $this->expiryDateTime = $dateTime;
+    }
+}

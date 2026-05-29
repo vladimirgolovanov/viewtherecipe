@@ -4,17 +4,19 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^4.3.6",
         "api-platform/mcp": "*",
+        "defuse/php-encryption": "^2.4",
         "doctrine/doctrine-bundle": "^3.2.2",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6.6",
         "gedmo/doctrine-extensions": "^3.22",
+        "league/oauth2-server": "^9.3",
         "nelmio/cors-bundle": "^2.6.1",
-        "nyholm/psr7": "^1.8.2",
+        "nyholm/psr7": "^1.8",
         "stof/doctrine-extensions-bundle": "^1.15.3",
         "symfony/amqp-messenger": "8.0.*",
         "symfony/console": "8.0.*",
@@ -25,11 +27,19 @@
         "symfony/mcp-bundle": ">=0.9",
         "symfony/messenger": "8.0.*",
         "symfony/object-mapper": "8.0.*",
+        "symfony/psr-http-message-bridge": "8.0.*",
         "symfony/runtime": "8.0.*",
         "symfony/security-bundle": "8.0.*",
         "symfony/yaml": "8.0.*"
     },
     "require-dev": {
+        "captainhook/captainhook": "^5.29",
+        "captainhook/captainhook-phar": "^5.29",
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^13.1.11",
         "symfony/browser-kit": "8.0.*",
         "symfony/css-selector": "8.0.*",
@@ -37,7 +47,9 @@
     },
     "config": {
         "allow-plugins": {
+            "captainhook/captainhook-phar": true,
             "php-http/discovery": true,
+            "phpstan/extension-installer": true,
             "symfony/flex": true,
             "symfony/runtime": true
         },
@@ -76,7 +88,10 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "cs-fix": "php-cs-fixer fix",
+        "cs-check": "php-cs-fixer fix --dry-run --diff",
+        "analyse": "phpstan analyse --no-progress"
     },
     "conflict": {
         "symfony/symfony": "*"
