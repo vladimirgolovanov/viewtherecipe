@@ -52,4 +52,17 @@ class WellKnownController extends AbstractController
             'response_types_supported' => ['token'],
         ]);
     }
+
+    #[Route('/.well-known/oauth-protected-resource/mcp', name: 'oauth2_well_known_mcp', methods: ['GET'])]
+    public function protectedResourceMcp(Request $request): JsonResponse
+    {
+        $baseUrl = $request->getSchemeAndHttpHost();
+
+        return new JsonResponse([
+            'resource' => $baseUrl.'/mcp',
+            'authorization_servers' => [$baseUrl],
+            'bearer_methods_supported' => ['header'],
+            'scopes_supported' => ['mcp'],
+        ]);
+    }
 }
