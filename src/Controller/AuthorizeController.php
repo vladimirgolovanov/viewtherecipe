@@ -42,6 +42,6 @@ class AuthorizeController extends AbstractController
             $psrResponse = $e->generateHttpResponse($psrResponse);
         }
 
-        return (new HttpFoundationFactory())->createResponse($psrResponse);
+        return new HttpFoundationFactory()->createResponse($psrResponse);
     }
 }

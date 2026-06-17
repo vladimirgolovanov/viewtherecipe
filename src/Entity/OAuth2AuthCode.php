@@ -43,4 +43,3 @@ class OAuth2AuthCode implements AuthCodeEntityInterface
         $this->revoked = true;
     }
 }
-

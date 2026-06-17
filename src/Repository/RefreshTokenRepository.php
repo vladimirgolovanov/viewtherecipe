@@ -40,4 +40,3 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
         return null === $token || $token->isRevoked();
     }
 }
-

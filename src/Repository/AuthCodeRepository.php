@@ -40,4 +40,3 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
         return null === $code || $code->isRevoked();
     }
 }
-
