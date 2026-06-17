@@ -13,7 +13,7 @@ security:
             stateless: false
             custom_authenticators:
                 - App\Security\TelegramAuthenticator
-            entry_point: App\Security\TelegramEntryPoint
+            entry_point: App\Security\OAuthEntryPoint
         oauth:
             pattern: ^/(token|\.well-known)
             security: false
