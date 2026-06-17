@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -73,6 +74,11 @@ class TelegramAuthenticator extends AbstractAuthenticator
     {
         /** @var User $user */
         $user = $token->getUser();
+
+        $redirect = $request->query->get('redirect');
+        if ($redirect) {
+            return new RedirectResponse($redirect);
+        }
 
         return new JsonResponse(['token' => $user->getApiToken()]);
     }
