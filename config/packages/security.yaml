@@ -8,6 +8,15 @@ security:
         dev:
             pattern: ^/_(profiler|wdt)
             security: false
+        oauth_authorize:
+            pattern: ^/authorize
+            stateless: false
+            custom_authenticators:
+                - App\Security\TelegramAuthenticator
+            entry_point: App\Security\TelegramEntryPoint
+        oauth:
+            pattern: ^/(token|\.well-known)
+            security: false
         mcp:
             pattern: ^/mcp
             stateless: true
@@ -23,6 +32,9 @@ security:
             entry_point: App\Security\TelegramEntryPoint
 
     access_control:
+        - { path: ^/authorize, roles: PUBLIC_ACCESS }
+        - { path: ^/token, roles: PUBLIC_ACCESS }
+        - { path: ^/\.well-known, roles: PUBLIC_ACCESS }
         - { path: ^/api/auth/telegram, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_USER }
         - { path: ^/mcp, roles: ROLE_USER }

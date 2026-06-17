@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
-
 parameters:
 
 services:
@@ -21,6 +19,18 @@ services:
             - enableGrantType:
                   - !service
                       class: League\OAuth2\Server\Grant\ClientCredentialsGrant
+                  - !service
+                      class: DateInterval
+                      arguments: ['PT1H']
+            - enableGrantType:
+                  - !service
+                      class: League\OAuth2\Server\Grant\AuthCodeGrant
+                      arguments:
+                          $authCodeRepository: '@App\Repository\AuthCodeRepository'
+                          $refreshTokenRepository: '@App\Repository\RefreshTokenRepository'
+                          $authCodeTTL: !service
+                              class: DateInterval
+                              arguments: ['PT10M']
                   - !service
                       class: DateInterval
                       arguments: ['PT1H']

@@ -9,12 +9,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User implements UserInterface
+class User implements UserInterface, UserEntityInterface
 {
     use TimestampableEntity;
     use SoftDeleteableEntity;
@@ -124,5 +125,10 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function getIdentifier(): string
+    {
+        return (string) $this->telegram_user_id;
     }
 }
