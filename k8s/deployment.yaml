@@ -24,6 +24,15 @@ spec:
                 name: viewtherecipe-env
           ports:
             - containerPort: 11456
+          volumeMounts:
+              - name: oauth-keys
+                mountPath: /var/www/html/var/oauth
+                readOnly: true
+      volumes:
+          - name: oauth-keys
+            secret:
+                secretName: oauth-keys
+                defaultMode: 0600
 ---
 apiVersion: v1
 kind: Service
