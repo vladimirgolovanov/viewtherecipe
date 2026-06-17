@@ -32,7 +32,7 @@ spec:
           - name: oauth-keys
             secret:
                 secretName: oauth-keys
-                defaultMode: 0600
+                defaultMode: 0644
 ---
 apiVersion: v1
 kind: Service
