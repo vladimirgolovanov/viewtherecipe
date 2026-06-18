@@ -80,7 +80,7 @@ class TelegramAuthenticator extends AbstractAuthenticator
             return new RedirectResponse($redirect);
         }
 
-        return new JsonResponse(['token' => $user->getApiToken()]);
+        return new JsonResponse(['success' => true]);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response

@@ -25,7 +25,7 @@ security:
             entry_point: App\Security\OAuth2EntryPoint
         api:
             pattern: ^/(api)
-            stateless: true
+            stateless: false
             custom_authenticators:
                 - App\Security\TelegramAuthenticator
                 - App\Security\ApiTokenAuthenticator
