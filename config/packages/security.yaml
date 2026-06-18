@@ -11,6 +11,7 @@ security:
         oauth_authorize:
             pattern: ^/authorize
             stateless: false
+            context: main
             custom_authenticators:
                 - App\Security\TelegramAuthenticator
             entry_point: App\Security\OAuthEntryPoint
@@ -26,6 +27,7 @@ security:
         api:
             pattern: ^/(api)
             stateless: false
+            context: main
             custom_authenticators:
                 - App\Security\TelegramAuthenticator
                 - App\Security\ApiTokenAuthenticator
