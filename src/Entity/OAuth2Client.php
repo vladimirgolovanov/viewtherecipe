@@ -54,7 +54,7 @@ class OAuth2Client implements ClientEntityInterface
 
     public function getRedirectUri(): array|string
     {
-        return [];
+        return ['https://claude.ai/api/mcp/auth_callback'];
     }
 
     public function isConfidential(): bool
