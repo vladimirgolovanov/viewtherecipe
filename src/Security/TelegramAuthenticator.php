@@ -45,6 +45,7 @@ class TelegramAuthenticator extends AbstractAuthenticator
 
         $hash = $params['hash'];
         unset($params['hash']);
+        unset($params['redirect']);
         ksort($params);
 
         $dataCheckString = implode("\n", array_map(
