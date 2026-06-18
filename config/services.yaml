@@ -10,7 +10,7 @@ services:
 
     League\OAuth2\Server\AuthorizationServer:
         arguments:
-            $clientRepository: '@App\Repository\ClientRepository'
+            $clientRepository: '@App\Repository\OAuth2ClientRepository'
             $accessTokenRepository: '@App\Repository\AccessTokenRepository'
             $scopeRepository: '@App\Repository\ScopeRepository'
             $privateKey: '%kernel.project_dir%/var/oauth/private.key'
