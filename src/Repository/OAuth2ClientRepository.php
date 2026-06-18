@@ -30,10 +30,14 @@ class OAuth2ClientRepository extends ServiceEntityRepository implements ClientRe
         $client = $this->findOneBy(['identifier' => $clientIdentifier]);
 
         if (null === $client) {
+            error_log('CLIENT NOT FOUND: '.$clientIdentifier);
+
             return false;
         }
 
         if ($client->isConfidential() && !$client->validateSecret((string) $clientSecret)) {
+            error_log('SECRET MISMATCH for: '.$clientIdentifier.' got: '.$clientSecret.' expected: '.$client->getSecret());
+
             return false;
         }
 
