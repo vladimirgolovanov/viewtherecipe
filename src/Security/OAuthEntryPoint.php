@@ -14,6 +14,6 @@ class OAuthEntryPoint implements AuthenticationEntryPointInterface
 {
     public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
-        return new RedirectResponse('/login?redirect='.urlencode($request->getUri()));
+        return new RedirectResponse('/login?redirect='.urlencode($request->getRequestUri()));
     }
 }
