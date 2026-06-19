@@ -31,9 +31,11 @@ class WellKnownController extends AbstractController
 
         return new JsonResponse([
             'issuer' => $baseUrl,
+            'authorization_endpoint' => $baseUrl.'/authorize',
             'token_endpoint' => $baseUrl.'/token',
-            'grant_types_supported' => ['client_credentials'],
-            'token_endpoint_auth_methods_supported' => ['client_secret_post'],
+            'grant_types_supported' => ['authorization_code'],
+            'response_types_supported' => ['code'],
+            'token_endpoint_auth_methods_supported' => ['none'],
             'scopes_supported' => ['mcp'],
         ]);
     }
@@ -45,11 +47,12 @@ class WellKnownController extends AbstractController
 
         return new JsonResponse([
             'issuer' => $baseUrl,
+            'authorization_endpoint' => $baseUrl.'/authorize',
             'token_endpoint' => $baseUrl.'/token',
-            'grant_types_supported' => ['client_credentials'],
-            'token_endpoint_auth_methods_supported' => ['client_secret_post'],
+            'grant_types_supported' => ['authorization_code'],
+            'response_types_supported' => ['code'],
+            'token_endpoint_auth_methods_supported' => ['none'],
             'scopes_supported' => ['mcp'],
-            'response_types_supported' => ['token'],
         ]);
     }
 

@@ -18,12 +18,6 @@ services:
         calls:
             - enableGrantType:
                   - !service
-                      class: League\OAuth2\Server\Grant\ClientCredentialsGrant
-                  - !service
-                      class: DateInterval
-                      arguments: ['PT1H']
-            - enableGrantType:
-                  - !service
                       class: App\Grant\AuthCodeGrant
                       arguments:
                           $authCodeRepository: '@App\Repository\AuthCodeRepository'
