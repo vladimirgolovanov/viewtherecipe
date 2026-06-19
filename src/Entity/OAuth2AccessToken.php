@@ -17,7 +17,7 @@ use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 #[ApiResource(
     operations: [
         new GetCollection(security: 'is_granted("ROLE_USER")'),
-        new Delete(security: 'object.getClient().getUser() == user'),
+        new Delete(security: 'object.getUserIdentifier() == user.getUserIdentifier()'),
     ]
 )]
 #[ORM\Entity]
@@ -32,9 +32,10 @@ class OAuth2AccessToken implements AccessTokenEntityInterface
     #[ORM\Column(type: 'string', length: 255)]
     protected string $identifier;
 
-    #[ORM\ManyToOne(targetEntity: OAuth2Client::class)]
-    #[ORM\JoinColumn(referencedColumnName: 'identifier', nullable: false)]
-    protected ClientEntityInterface $client; // @phpstan-ignore-line
+    protected ClientEntityInterface $client;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    protected ?string $userIdentifier = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $revoked = false;

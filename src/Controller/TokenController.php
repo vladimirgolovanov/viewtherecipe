@@ -7,6 +7,7 @@ namespace App\Controller;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +19,7 @@ class TokenController extends AbstractController
 {
     public function __construct(
         private AuthorizationServer $server,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -32,6 +34,11 @@ class TokenController extends AbstractController
         try {
             $psrResponse = $this->server->respondToAccessTokenRequest($psrRequest, $psrResponse);
         } catch (OAuthServerException $e) {
+            $this->logger->error('OAuth2 token error', [
+                'message' => $e->getMessage(),
+                'hint' => $e->getHint(),
+                'error_type' => $e->getErrorType(),
+            ]);
             $psrResponse = $e->generateHttpResponse($psrResponse);
         }
 

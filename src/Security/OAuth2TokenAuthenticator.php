@@ -6,6 +6,7 @@ namespace App\Security;
 
 use App\Entity\OAuth2AccessToken;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,7 @@ class OAuth2TokenAuthenticator extends AbstractAuthenticator
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -43,10 +45,12 @@ class OAuth2TokenAuthenticator extends AbstractAuthenticator
                     throw new AuthenticationException('Invalid or expired OAuth2 token.');
                 }
 
-                $client = $token->getClient();
-                assert($client instanceof \App\Entity\OAuth2Client);
+                $user = $this->userRepository->loadUserByIdentifier($token->getUserIdentifier() ?? '');
+                if (!$user instanceof User) {
+                    throw new AuthenticationException('User not found.');
+                }
 
-                return $client->getUser();
+                return $user;
             })
         );
     }

@@ -4,34 +4,26 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\OAuth2Client;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\ClientEntity;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
 class ClientRepository implements ClientRepositoryInterface
 {
-    public function __construct(private EntityManagerInterface $em)
-    {
+    public function __construct(
+        private readonly UserRepository $userRepository,
+    ) {
     }
 
     public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
     {
-        return $this->em->getRepository(OAuth2Client::class)->find($clientIdentifier);
+        $user = $this->userRepository->loadUserByIdentifier($clientIdentifier);
+
+        return $user !== null ? new ClientEntity($clientIdentifier) : null;
     }
 
     public function validateClient(string $clientIdentifier, ?string $clientSecret, ?string $grantType): bool
     {
-        $client = $this->em->getRepository(OAuth2Client::class)->find($clientIdentifier);
-
-        if (!$client instanceof OAuth2Client) {
-            return false;
-        }
-
-        if ('client_credentials' !== $grantType) {
-            return false;
-        }
-
-        return null !== $clientSecret && $client->validateSecret($clientSecret);
+        return $this->userRepository->loadUserByIdentifier($clientIdentifier) !== null;
     }
 }

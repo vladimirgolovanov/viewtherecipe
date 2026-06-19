@@ -10,7 +10,7 @@ services:
 
     League\OAuth2\Server\AuthorizationServer:
         arguments:
-            $clientRepository: '@App\Repository\OAuth2ClientRepository'
+            $clientRepository: '@App\Repository\ClientRepository'
             $accessTokenRepository: '@App\Repository\AccessTokenRepository'
             $scopeRepository: '@App\Repository\ScopeRepository'
             $privateKey: '%kernel.project_dir%/var/oauth/private.key'
@@ -24,7 +24,7 @@ services:
                       arguments: ['PT1H']
             - enableGrantType:
                   - !service
-                      class: League\OAuth2\Server\Grant\AuthCodeGrant
+                      class: App\Grant\AuthCodeGrant
                       arguments:
                           $authCodeRepository: '@App\Repository\AuthCodeRepository'
                           $refreshTokenRepository: '@App\Repository\RefreshTokenRepository'

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\OAuth2AccessToken;
-use App\Entity\OAuth2Client;
 use Doctrine\ORM\EntityManagerInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
@@ -21,6 +20,9 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     {
         $token = new OAuth2AccessToken();
         $token->setClient($clientEntity);
+        if ($userIdentifier !== null) {
+            $token->setUserIdentifier($userIdentifier);
+        }
         foreach ($scopes as $scope) {
             $token->addScope($scope);
         }
@@ -46,19 +48,5 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
         $token = $this->em->getRepository(OAuth2AccessToken::class)->find($tokenId);
 
         return null === $token || $token->isRevoked();
-    }
-
-    public function findValidByClient(OAuth2Client $client): ?OAuth2AccessToken
-    {
-        return $this->em->getRepository(OAuth2AccessToken::class)
-            ->createQueryBuilder('t')
-            ->where('t.client = :client')
-            ->andWhere('t.revoked = false')
-            ->andWhere('t.expiryDateTime > :now')
-            ->setParameter('client', $client)
-            ->setParameter('now', new \DateTimeImmutable())
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
     }
 }

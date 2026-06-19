@@ -23,9 +23,7 @@ class OAuth2AuthCode implements AuthCodeEntityInterface
     #[ORM\Column(type: 'string', length: 255)]
     protected string $identifier;
 
-    #[ORM\ManyToOne(targetEntity: OAuth2Client::class)]
-    #[ORM\JoinColumn(referencedColumnName: 'identifier', nullable: false)]
-    protected ClientEntityInterface $client; // @phpstan-ignore-line
+    protected ClientEntityInterface $client;
 
     #[ORM\Column(type: 'boolean')]
     private bool $revoked = false;

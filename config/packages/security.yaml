@@ -34,6 +34,7 @@ security:
             entry_point: App\Security\TelegramEntryPoint
 
     access_control:
+        - { path: ^/dev/login, roles: PUBLIC_ACCESS }
         - { path: ^/authorize, roles: PUBLIC_ACCESS }
         - { path: ^/token, roles: PUBLIC_ACCESS }
         - { path: ^/\.well-known, roles: PUBLIC_ACCESS }
