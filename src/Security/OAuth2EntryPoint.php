@@ -14,10 +14,12 @@ class OAuth2EntryPoint implements AuthenticationEntryPointInterface
 {
     public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
+        $resourceMetadata = $request->getSchemeAndHttpHost().'/.well-known/oauth-protected-resource';
+
         return new JsonResponse(
             ['error' => 'access_denied', 'error_description' => 'Authentication required'],
             Response::HTTP_UNAUTHORIZED,
-            ['WWW-Authenticate' => 'Bearer realm="MCP", resource_metadata="/.well-known/oauth-protected-resource"'],
+            ['WWW-Authenticate' => 'Bearer realm="MCP", resource_metadata="'.$resourceMetadata.'"'],
         );
     }
 }

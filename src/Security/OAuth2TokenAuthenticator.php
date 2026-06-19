@@ -68,10 +68,12 @@ class OAuth2TokenAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
+        $resourceMetadata = $request->getSchemeAndHttpHost().'/.well-known/oauth-protected-resource';
+
         return new JsonResponse(
             ['error' => 'access_denied', 'error_description' => $exception->getMessage()],
             Response::HTTP_UNAUTHORIZED,
-            ['WWW-Authenticate' => 'Bearer realm="MCP", resource_metadata="/.well-known/oauth-protected-resource"'],
+            ['WWW-Authenticate' => 'Bearer realm="MCP", resource_metadata="'.$resourceMetadata.'"'],
         );
     }
 }
