@@ -1,4 +1,6 @@
 parameters:
+    oauth_private_key: 'file://%kernel.project_dir%/config/jwt/private.key'
+    oauth_public_key: 'file://%kernel.project_dir%/config/jwt/public.key'
 
 services:
     _defaults:
@@ -9,22 +11,14 @@ services:
         resource: '../src/'
 
     League\OAuth2\Server\AuthorizationServer:
+        factory: ['@App\OAuth\AuthorizationServerFactory', 'create']
+
+    App\OAuth\AuthorizationServerFactory:
         arguments:
-            $clientRepository: '@App\Repository\ClientRepository'
+            $privateKey: '%oauth_private_key%'
+            $encryptionKey: '%env(OAUTH_ENCRYPTION_KEY)%'
+
+    League\OAuth2\Server\ResourceServer:
+        arguments:
             $accessTokenRepository: '@App\Repository\AccessTokenRepository'
-            $scopeRepository: '@App\Repository\ScopeRepository'
-            $privateKey: '%kernel.project_dir%/var/oauth/private.key'
-            $encryptionKey: '%env(OAUTH2_ENCRYPTION_KEY)%'
-        calls:
-            - enableGrantType:
-                  - !service
-                      class: App\Grant\AuthCodeGrant
-                      arguments:
-                          $authCodeRepository: '@App\Repository\AuthCodeRepository'
-                          $refreshTokenRepository: '@App\Repository\RefreshTokenRepository'
-                          $authCodeTTL: !service
-                              class: DateInterval
-                              arguments: ['PT10M']
-                  - !service
-                      class: DateInterval
-                      arguments: ['PT1H']
+            $publicKey: '%oauth_public_key%'

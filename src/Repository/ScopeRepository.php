@@ -1,29 +1,68 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Repository;
 
-use App\Entity\OAuth2Scope;
+use App\Entity\Scope;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 
-class ScopeRepository implements ScopeRepositoryInterface
+/**
+ * @extends ServiceEntityRepository<Scope>
+ */
+class ScopeRepository extends ServiceEntityRepository implements ScopeRepositoryInterface
 {
-    private const SCOPES = ['mcp'];
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Scope::class);
+    }
 
     public function getScopeEntityByIdentifier(string $identifier): ?ScopeEntityInterface
     {
-        if (!in_array($identifier, self::SCOPES, true)) {
-            return null;
-        }
-
-        return new OAuth2Scope($identifier);
+        return $this->findOneBy(['identifier' => $identifier]);
     }
 
-    public function finalizeScopes(array $scopes, string $grantType, ClientEntityInterface $clientEntity, ?string $userIdentifier = null, ?string $authCodeId = null): array
-    {
-        return $scopes;
+    public function finalizeScopes(
+        array $scopes,
+        string $grantType,
+        ClientEntityInterface $clientEntity,
+        ?string $userIdentifier = null,
+        ?string $authCodeId = null
+    ): array {
+        return array_filter(
+            $scopes,
+            fn (ScopeEntityInterface $scope) => in_array(
+                $scope->getIdentifier(),
+                $clientEntity->getScopes(),
+                true
+            )
+        );
     }
+
+    //    /**
+    //     * @return Scope[] Returns an array of Scope objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('s')
+    //            ->andWhere('s.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('s.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?Scope
+    //    {
+    //        return $this->createQueryBuilder('s')
+    //            ->andWhere('s.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

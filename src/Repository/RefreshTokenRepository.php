@@ -1,42 +1,74 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Repository;
 
-use App\Entity\OAuth2RefreshToken;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\RefreshToken;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 
-class RefreshTokenRepository implements RefreshTokenRepositoryInterface
+/**
+ * @extends ServiceEntityRepository<RefreshToken>
+ */
+class RefreshTokenRepository extends ServiceEntityRepository implements RefreshTokenRepositoryInterface
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(ManagerRegistry $registry)
     {
+        parent::__construct($registry, RefreshToken::class);
     }
 
     public function getNewRefreshToken(): ?RefreshTokenEntityInterface
     {
-        return new OAuth2RefreshToken();
+        $refreshToken = new RefreshToken();
+        $refreshToken->setRevoked(false);
+
+        return $refreshToken;
     }
 
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void
     {
-        $this->em->persist($refreshTokenEntity);
-        $this->em->flush();
+        $this->getEntityManager()->persist($refreshTokenEntity);
+        $this->getEntityManager()->flush();
     }
 
     public function revokeRefreshToken(string $tokenId): void
     {
-        $token = $this->em->getRepository(OAuth2RefreshToken::class)->find($tokenId);
-        $token?->revoke();
-        $this->em->flush();
+        $token = $this->findOneBy(['identifier' => $tokenId]);
+        if ($token) {
+            $token->setRevoked(true);
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function isRefreshTokenRevoked(string $tokenId): bool
     {
-        $token = $this->em->getRepository(OAuth2RefreshToken::class)->find($tokenId);
-
-        return null === $token || $token->isRevoked();
+        $token = $this->findOneBy(['identifier' => $tokenId]);
+        return $token === null || $token->isRevoked();
     }
+
+    //    /**
+    //     * @return RefreshToken[] Returns an array of RefreshToken objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('r.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?RefreshToken
+    //    {
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

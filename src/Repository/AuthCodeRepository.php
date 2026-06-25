@@ -1,42 +1,46 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Repository;
 
-use App\Entity\OAuth2AuthCode;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\AuthCode;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
-class AuthCodeRepository implements AuthCodeRepositoryInterface
+class AuthCodeRepository extends ServiceEntityRepository implements AuthCodeRepositoryInterface
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(ManagerRegistry $registry)
     {
+        parent::__construct($registry, AuthCode::class);
     }
 
     public function getNewAuthCode(): AuthCodeEntityInterface
     {
-        return new OAuth2AuthCode();
+        $authCode = new AuthCode();
+        $authCode->setRevoked(false);
+
+        return $authCode;
     }
 
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity): void
     {
-        $this->em->persist($authCodeEntity);
-        $this->em->flush();
+        $this->getEntityManager()->persist($authCodeEntity);
+        $this->getEntityManager()->flush();
     }
 
     public function revokeAuthCode(string $codeId): void
     {
-        $code = $this->em->getRepository(OAuth2AuthCode::class)->find($codeId);
-        $code?->revoke();
-        $this->em->flush();
+        $authCode = $this->findOneBy(['identifier' => $codeId]);
+        if ($authCode) {
+            $authCode->setRevoked(true);
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function isAuthCodeRevoked(string $codeId): bool
     {
-        $code = $this->em->getRepository(OAuth2AuthCode::class)->find($codeId);
-
-        return null === $code || $code->isRevoked();
+        $authCode = $this->findOneBy(['identifier' => $codeId]);
+        return $authCode === null || $authCode->isRevoked();
     }
 }

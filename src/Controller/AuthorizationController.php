@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Repository\UserRepository;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,15 +15,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class TokenController extends AbstractController
+class AuthorizationController extends AbstractController
 {
     public function __construct(
         private readonly AuthorizationServer $server,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
-    #[Route('/token', name: 'oauth_token', methods: ['POST'])]
-    public function token(Request $request): Response
+    #[Route('/authorize', name: 'oauth_authorize', methods: ['GET'])]
+    public function authorize(Request $request): Response
     {
         $psr17Factory = new Psr17Factory();
         $psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
@@ -30,7 +34,12 @@ class TokenController extends AbstractController
         $psrResponse = $psr17Factory->createResponse();
 
         try {
-            $psrResponse = $this->server->respondToAccessTokenRequest($psrRequest, $psrResponse);
+            $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
+            /** @var \App\Entity\User $user */
+            $user = $this->getUser();
+            $authRequest->setUser($user);
+            $authRequest->setAuthorizationApproved(true);
+            $psrResponse = $this->server->completeAuthorizationRequest($authRequest, $psrResponse);
         } catch (OAuthServerException $e) {
             $psrResponse = $e->generateHttpResponse($psrResponse);
         }
