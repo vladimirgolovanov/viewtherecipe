@@ -2,12 +2,9 @@
 
 namespace App\Controller;
 
-use App\Repository\UserRepository;
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +16,6 @@ class AuthorizationController extends AbstractController
 {
     public function __construct(
         private readonly AuthorizationServer $server,
-        private readonly UserRepository $userRepository,
     ) {
     }
 

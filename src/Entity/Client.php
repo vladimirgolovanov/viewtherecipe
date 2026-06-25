@@ -74,6 +74,7 @@ class Client implements ClientEntityInterface
     public function getRedirectUri(): string|array
     {
         $uris = $this->redirectUris;
+
         return count($uris) === 1 ? $uris[0] : $uris;
     }
 
@@ -99,6 +100,7 @@ class Client implements ClientEntityInterface
     public function setConfidential(bool $value): static
     {
         $this->isConfidential = $value;
+
         return $this;
     }
 }

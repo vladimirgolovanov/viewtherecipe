@@ -44,6 +44,7 @@ class RefreshTokenRepository extends ServiceEntityRepository implements RefreshT
     public function isRefreshTokenRevoked(string $tokenId): bool
     {
         $token = $this->findOneBy(['identifier' => $tokenId]);
+
         return $token === null || $token->isRevoked();
     }
 

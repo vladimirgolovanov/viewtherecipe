@@ -13,6 +13,8 @@ spec:
       labels:
         app: viewtherecipe
     spec:
+      securityContext:
+        fsGroup: 82
       imagePullSecrets:
         - name: ghcr-secret
       containers:
@@ -32,7 +34,7 @@ spec:
           - name: oauth-keys
             secret:
                 secretName: oauth-keys
-                defaultMode: 0600
+                defaultMode: 0640
 ---
 apiVersion: v1
 kind: Service

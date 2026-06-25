@@ -41,6 +41,7 @@ class AuthCodeRepository extends ServiceEntityRepository implements AuthCodeRepo
     public function isAuthCodeRevoked(string $codeId): bool
     {
         $authCode = $this->findOneBy(['identifier' => $codeId]);
+
         return $authCode === null || $authCode->isRevoked();
     }
 }
