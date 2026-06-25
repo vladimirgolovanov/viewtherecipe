@@ -26,13 +26,13 @@ spec:
             - containerPort: 11456
           volumeMounts:
               - name: oauth-keys
-                mountPath: /var/www/html/var/oauth
+                mountPath: /var/www/html/config/jwt
                 readOnly: true
       volumes:
           - name: oauth-keys
             secret:
                 secretName: oauth-keys
-                defaultMode: 0644
+                defaultMode: 0600
 ---
 apiVersion: v1
 kind: Service
