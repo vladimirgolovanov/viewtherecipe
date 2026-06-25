@@ -28,6 +28,16 @@ class WellKnownController extends AbstractController
             'scopes_supported' => ['email'],
         ]);
     }
+
+    #[Route('/.well-known/oauth-protected-resource', name: 'oauth_well_known_protected_resource', methods: ['GET'])]
+    public function oauthProtectedResource(): JsonResponse
+    {
+        return $this->json([
+            'resource' => 'http://localhost:8000/mcp',
+            'authorization_servers' => ['http://localhost:8000'],
+            'registration_endpoint' => 'http://localhost:8000/register',
+        ]);
+    }
 }
 
 /*

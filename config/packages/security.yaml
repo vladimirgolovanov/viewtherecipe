@@ -19,6 +19,7 @@ security:
         mcp:
             pattern: ^/mcp
             stateless: true
+            entry_point: App\Security\OAuthAuthenticator
             custom_authenticators:
                 - App\Security\OAuthAuthenticator
 
@@ -29,3 +30,4 @@ security:
         - { path: ^/\.well-known, roles: PUBLIC_ACCESS }
         - { path: ^/api/auth/telegram, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_USER }
+        - { path: ^/mcp, roles: ROLE_USER }
