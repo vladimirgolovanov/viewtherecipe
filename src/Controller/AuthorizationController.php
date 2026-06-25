@@ -33,6 +33,9 @@ class AuthorizationController extends AbstractController
             $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
             /** @var \App\Entity\User $user */
             $user = $this->getUser();
+            if ($user === null) {
+                return $this->redirect('/login?redirect=' . urlencode($request->getUri()));
+            }
             $authRequest->setUser($user);
             $authRequest->setAuthorizationApproved(true);
             $psrResponse = $this->server->completeAuthorizationRequest($authRequest, $psrResponse);
