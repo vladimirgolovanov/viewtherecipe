@@ -14,7 +14,7 @@ final class RequestLoggerListener
     ) {
     }
 
-    #[AsEventListener]
+    #[AsEventListener(priority: 300)]
     public function onRequestEvent(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
