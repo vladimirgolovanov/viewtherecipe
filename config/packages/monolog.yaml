@@ -1,6 +1,7 @@
 monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+        - requests
 
 when@dev:
     monolog:
@@ -14,6 +15,12 @@ when@dev:
                 type: console
                 process_psr_3_messages: false
                 channels: ["!event", "!doctrine", "!console"]
+            requests:
+                type: stream
+                path: php://stdout
+                level: info
+                channels: [requests]
+                formatter: monolog.formatter.json
 
 when@test:
     monolog:
@@ -37,8 +44,8 @@ when@prod:
                 action_level: error
                 handler: nested
                 excluded_http_codes: [404, 405]
-                channels: ["!deprecation"]
-                buffer_size: 50 # How many messages should be saved? Prevent memory leaks
+                channels: ["!deprecation", "!requests"]
+                buffer_size: 50
             nested:
                 type: stream
                 path: php://stderr
@@ -52,4 +59,10 @@ when@prod:
                 type: stream
                 channels: [deprecation]
                 path: php://stderr
+                formatter: monolog.formatter.json
+            requests:
+                type: stream
+                path: php://stdout
+                level: info
+                channels: [requests]
                 formatter: monolog.formatter.json

@@ -22,3 +22,7 @@ services:
         arguments:
             $accessTokenRepository: '@App\Repository\AccessTokenRepository'
             $publicKey: '%oauth_public_key%'
+
+    App\EventListener\RequestLoggerListener:
+        arguments:
+            $logger: '@monolog.logger.requests'
