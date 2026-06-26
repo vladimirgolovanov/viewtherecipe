@@ -10,14 +10,15 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 final class RequestLoggerListener
 {
     public function __construct(
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly bool $enabled = true,
     ) {
     }
 
     #[AsEventListener(priority: 300)]
     public function onRequestEvent(RequestEvent $event): void
     {
-        if (!$event->isMainRequest()) {
+        if (!$this->enabled || !$event->isMainRequest()) {
             return;
         }
 
@@ -36,7 +37,7 @@ final class RequestLoggerListener
     #[AsEventListener]
     public function onResponseEvent(ResponseEvent $event): void
     {
-        if (!$event->isMainRequest()) {
+        if (!$this->enabled || !$event->isMainRequest()) {
             return;
         }
 
@@ -44,7 +45,8 @@ final class RequestLoggerListener
 
         $this->logger->info('Outgoing response', [
             'status' => $response->getStatusCode(),
-            'body'   => $response->getContent(),
+            'headers' => $response->headers->all(),
+            'body' => $response->getContent(),
         ]);
     }
 }

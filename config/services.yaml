@@ -26,3 +26,4 @@ services:
     App\EventListener\RequestLoggerListener:
         arguments:
             $logger: '@monolog.logger.requests'
+            $enabled: '%env(bool:REQUEST_LOGGING_ENABLED)%'
