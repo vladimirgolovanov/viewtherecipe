@@ -8,6 +8,9 @@ security:
         dev:
             pattern: ^/_(profiler|wdt)
             security: false
+        oauth_public:
+            pattern: ^/(register|authorize|token|\.well-known)
+            security: false
         api:
             pattern: ^/(api)
             stateless: false
@@ -25,6 +28,7 @@ security:
 
     access_control:
         - { path: ^/dev/login, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/authorize, roles: PUBLIC_ACCESS }
         - { path: ^/token, roles: PUBLIC_ACCESS }
         - { path: ^/\.well-known, roles: PUBLIC_ACCESS }
