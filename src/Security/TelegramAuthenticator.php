@@ -73,15 +73,12 @@ class TelegramAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        /** @var User $user */
-        $user = $token->getUser();
-
         $redirect = $request->query->get('redirect');
         if ($redirect) {
             return new RedirectResponse($redirect);
         }
 
-        return new JsonResponse(['success' => true]);
+        return new RedirectResponse('/recipes');
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
