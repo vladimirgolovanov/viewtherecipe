@@ -48,7 +48,6 @@ final class RegisterController extends AbstractController
             $clientId = bin2hex(random_bytes(16));
         }
 
-        // клиент уже зарегистрирован?
         $existing = $clientRepository->findOneBy(['clientId' => $clientId]);
         if ($existing) {
             return new JsonResponse([
@@ -69,6 +68,13 @@ final class RegisterController extends AbstractController
         return new JsonResponse([
             'client_id' => $client->getClientId(),
             'client_id_issued_at' => time(),
+            'redirect_uris' => $redirectUris,
+            'grant_types' => $data['grant_types'] ?? ['authorization_code'],
+            'response_types' => $data['response_types'] ?? ['code'],
+            'token_endpoint_auth_method' => $data['token_endpoint_auth_method'] ?? 'none',
+            'scope' => $data['scope'] ?? '',
+            'client_name' => $data['client_name'] ?? '',
+            'application_type' => $data['application_type'] ?? 'web',
         ], 201);
     }
 }
