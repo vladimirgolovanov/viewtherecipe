@@ -23,6 +23,12 @@ class ListRecipe
         /** @var User $user */
         $user = $this->security->getUser();
 
-        return $this->recipeRepository->findAllForOwner($user->getId());
+        $recipes = $this->recipeRepository->findAllForOwner($user->getId());
+
+        return array_map(fn ($recipe) => [
+            'id' => $recipe->getId(),
+            'title' => $recipe->getTitle(),
+            'description' => $recipe->getDescription(),
+        ], $recipes);
     }
 }
