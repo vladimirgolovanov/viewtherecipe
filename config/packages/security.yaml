@@ -9,7 +9,7 @@ security:
             pattern: ^/_(profiler|wdt)
             security: false
         oauth_public:
-            pattern: ^/(register|authorize|token|\.well-known)
+            pattern: ^/(register|token)
             security: false
         api:
             pattern: ^/(api)
@@ -29,9 +29,7 @@ security:
     access_control:
         - { path: ^/dev/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/authorize, roles: PUBLIC_ACCESS }
         - { path: ^/token, roles: PUBLIC_ACCESS }
-        - { path: ^/\.well-known, roles: PUBLIC_ACCESS }
         - { path: ^/api/auth/telegram, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_USER }
         - { path: ^/mcp, roles: ROLE_USER }
