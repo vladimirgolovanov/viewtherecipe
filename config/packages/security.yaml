@@ -11,6 +11,13 @@ security:
         oauth_public:
             pattern: ^/(register|token)
             security: false
+        authorize:
+            pattern: ^/(authorize|\.well-known)
+            stateless: false
+            context: main
+            custom_authenticators:
+                - App\Security\TelegramAuthenticator
+            entry_point: App\Security\TelegramEntryPoint
         api:
             pattern: ^/(api)
             stateless: false
