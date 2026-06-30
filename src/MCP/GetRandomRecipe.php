@@ -9,8 +9,8 @@ use App\Repository\RecipeRepository;
 use Mcp\Capability\Attribute\McpTool;
 use Symfony\Bundle\SecurityBundle\Security;
 
-#[McpTool(name: 'list_recipe')]
-class ListRecipe
+#[McpTool(name: 'get_random_recipe')]
+class GetRandomRecipe
 {
     public function __construct(
         private RecipeRepository $recipeRepository,
@@ -23,14 +23,14 @@ class ListRecipe
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $recipes = $this->recipeRepository->findAllForOwner($user->getId());
+        $randomRecipe = $this->recipeRepository->findRandomForOwner($user->getId());
 
         return [
-            'recipes' => array_map(fn ($recipe) => [
-                'id' => $recipe->getId(),
-                'title' => $recipe->getTitle(),
-                'description' => $recipe->getDescription(),
-            ], $recipes),
+            'random_recipe' => [
+                'id' => $randomRecipe->getId(),
+                'title' => $randomRecipe->getTitle(),
+                'description' => $randomRecipe->getDescription(),
+            ],
         ];
     }
 }

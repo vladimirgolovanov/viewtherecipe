@@ -5,6 +5,8 @@ mcp:
     instructions: |
         This MCP server provides access to recipes saved by the user in SaveTheRecipe.
 
+        To get all user recipes call list_recipe.
+
         When helping a user plan meals:
         1. Ask how many meals they want to plan and any dietary preferences.
         2. Call get_random_recipe to get one recipe suggestion.
