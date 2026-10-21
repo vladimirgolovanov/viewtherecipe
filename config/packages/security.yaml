@@ -28,10 +28,11 @@ security:
             entry_point: App\Security\TelegramEntryPoint
         mcp:
             pattern: ^/mcp
-            stateless: true
-            entry_point: App\Security\OAuthAuthenticator
-            custom_authenticators:
-                - App\Security\OAuthAuthenticator
+            security: false
+#            stateless: true
+#            entry_point: App\Security\OAuthAuthenticator
+#            custom_authenticators:
+#                - App\Security\OAuthAuthenticator
 
     access_control:
         - { path: ^/dev/login, roles: PUBLIC_ACCESS }
@@ -40,4 +41,5 @@ security:
         - { path: ^/authorize, roles: ROLE_USER }
         - { path: ^/api/auth/telegram, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_USER }
-        - { path: ^/mcp, roles: ROLE_USER }
+#        - { path: ^/mcp, roles: ROLE_USER }
+        - { path: ^/mcp, roles: PUBLIC_ACCESS }
